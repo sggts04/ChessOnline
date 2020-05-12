@@ -1,0 +1,36 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.game {
+    display: flex;
+}
+
+.side {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 1.6em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.5em;
+    min-width: 12vw;
+    text-align: center;
+    height: 60vh;
+}
+
+#pgn {
+    height: 100%;
+    overflow-y: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#myBoard {
+    width: 70vh;
+}
