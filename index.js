@@ -47,7 +47,19 @@ io.on('connection', function (socket) {
     });
 
     socket.on('move', function (msg) {
-        socket.broadcast.emit('move', msg);
+        if((games[msg.roomId].game.turn() === 'w' && games[msg.roomId].pid[0] === playerId) ||
+           (games[msg.roomId].game.turn() === 'b' && games[msg.roomId].pid[1] === playerId)) {
+            var move = games[msg.roomId].game.move(msg.move);
+            if (move === null) return;
+            else {
+                socket.broadcast.emit('move', msg);
+            }
+        } else {
+            var mycolor = '';
+            if(games[msg.roomId].pid[0] === playerId) mycolor = 'white';
+            else mycolor = 'black';
+            socket.emit('resetBoard', {roomId: msg.roomId, board: games[msg.roomId].game.fen(), mycolor: mycolor});
+        }
     });
 
     socket.on('disconnect', function () {   
@@ -69,10 +81,6 @@ io.on('connection', function (socket) {
         games[msg].game = serverGame;
         io.emit('play', {room: msg, serverGame: serverGame.fen()});
         console.log("Room " + msg + " is now playing.");
-    });
-
-    socket.on('move', function (msg) {
-        socket.broadcast.emit('move', msg);
     });
 
 });

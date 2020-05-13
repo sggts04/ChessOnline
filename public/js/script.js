@@ -44,7 +44,7 @@ function onDragStart(source, piece, position, orientation) {
 
     // only pick up pieces for the side to move
     if (!playing || (game.turn() === 'w' && (piece.search(/^b/) !== -1 || color==='black')) ||
-        (game.turn() === 'b' && (piece.search(/^w/) !== -1 || color==='white'))) {
+        (game.turn() === 'b' && (piece.search(/^w/) !== -1 || color==='white')) || (color !== 'black' && color !== 'white')) {
         return false
     }
 }
@@ -203,5 +203,16 @@ socket.on('move', function (msg) {
         if (game.in_checkmate() || game.in_check()) genAudio.play()
         else if (msg.move.captured) captureAudio.play()
         else moveAudio.play()
+    }
+});
+
+socket.on('resetBoard', function (msg) {
+    if(roomId === msg.roomId) {
+        game.load(msg.board);
+        board.position(game.fen());
+        updateStatus();
+        genAudio.play();
+        color = msg.mycolor;
+        alert("Are you sure you want to do that mate?");
     }
 });
