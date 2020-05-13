@@ -18,6 +18,7 @@ function connect() {
     roomId = $room.val();
     if(roomId != "" && parseInt(roomId) < 100) {
         $roomSelector.remove();
+        document.getElementById("gameDiv").style.display = 'flex';
         socket.emit('joined', roomId);
         console.log(roomId);
     }
