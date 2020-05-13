@@ -164,10 +164,18 @@ socket.on('full', function (msg) {
       window.location.reload();
 });
 
+socket.on('opponentDisconnect', function (msg) {
+    if(roomId == msg)
+      alert('Your opponent left!');
+      window.location.reload();
+});
+
 socket.on('play', function (msg) {
-    if (msg == roomId) {
+    if (msg.room == roomId) {
         playing=true;
         $('#gameState').remove();
+        game.load(msg.serverGame);
+        board.position(msg.serverGame);
     }
 });
 

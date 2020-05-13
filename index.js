@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+const { Chess } = require('chess.js')
 const port = process.env.PORT || 3000
 
 app.use(express.static(__dirname + '/public'));
@@ -14,7 +15,8 @@ var games = Array(100);
 for (let i = 0; i < 100; i++) {
     games[i] = {
         players: 0,
-        pid: [0, 0]
+        pid: [0, 0],
+        game: null
     };
 }
 
@@ -50,14 +52,22 @@ io.on('connection', function (socket) {
 
     socket.on('disconnect', function () {   
         for (let i = 0; i < 100; i++) {
-            if (games[i].pid[0] == playerId || games[i].pid[1] == playerId)
-                games[i].players--;
+            if (games[i].pid[0] == playerId || games[i].pid[1] == playerId) {
+                games[i] = {
+                    players: 0,
+                    pid: [0, 0],
+                    game: null
+                };
+                io.emit('opponentDisconnect', i);
+            }
         }
         console.log(playerId + ' disconnected');
     });
 
     socket.on('play', function (msg) {
-        socket.broadcast.emit('play', msg);
+        const serverGame = new Chess();
+        games[msg].game = serverGame;
+        io.emit('play', {room: msg, serverGame: serverGame.fen()});
         console.log("Room " + msg + " is now playing.");
     });
 
